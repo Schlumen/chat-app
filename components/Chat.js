@@ -1,8 +1,11 @@
 import { StyleSheet, View, Text } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { GiftedChat } from "react-native-gifted-chat";
 
 const Chat = ({ route, navigation }) => {
     const { name, color } = route.params;
+    const [messages, setMessages] = useState([]);
+
 
     useEffect(() => {
         // Set screen title according to given name from prop
