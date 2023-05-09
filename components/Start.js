@@ -1,5 +1,6 @@
-import { StyleSheet, ImageBackground, Text, View, Button, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, ImageBackground, Text, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
+import { Platform } from 'react-native';
 
 const Start = ({ navigation }) => {
     const [name, setName] = useState('');
@@ -42,6 +43,7 @@ const Start = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ImageBackground>
+            {Platform.OS === 'ios' ? <KeyboardAvoidingView behavior='padding' /> : null}
         </View>
     );
 }
