@@ -24,7 +24,7 @@ const Chat = ({ route, navigation }) => {
             },
             {
                 _id: 2,
-                text: 'This is a System message',
+                text: `${name} has entered the chat`,
                 createdAt: new Date(),
                 system: true
             }
