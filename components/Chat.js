@@ -1,46 +1,49 @@
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
 import { useEffect, useState } from "react";
 import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { onSnapshot, collection, orderBy, query, addDoc } from "firebase/firestore";
 
-const Chat = ({ route, navigation }) => {
-    const { name, color } = route.params;
+const Chat = ({ db, route, navigation }) => {
+    const { name, color, userID } = route.params;
     const [messages, setMessages] = useState([]);
-
 
     useEffect(() => {
         // Set screen title according to given name from prop
         navigation.setOptions({ title: name });
 
-        setMessages([
-            {
-                _id: 1,
-                text: "Hello developer",
-                createdAt: new Date(),
-                user: {
-                    _id: 2,
-                    name: "React Native",
-                    avatar: "https://placeimg.com/140/140/any"
-                }
-            },
-            {
-                _id: 2,
-                text: `${name} has entered the chat`,
-                createdAt: new Date(),
-                system: true
-            }
-        ]);
+        // Create stream with database to read messages
+        const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+        const unsubMessages = onSnapshot(q, docSnap => {
+            let msgList = [];
+            docSnap.forEach(doc => {
+                msgList.push({
+                    id: doc.id,
+                    ...doc.data(),
+                    createdAt: new Date(doc.data().createdAt.toMillis())
+                });
+            });
+            setMessages(msgList);
+        });
+
+        // Clean up code
+        return () => {
+            if (unsubMessages) unsubMessages();
+        }
     }, []);
 
     const onSend = (newMessages) => {
-        setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
+        addDoc(collection(db, "messages"), newMessages[0])
     }
 
     const renderBubble = props => {
         return <Bubble
             {...props}
             wrapperStyle={{
-                right: { backgroundColor: '#000' },
-                left: { backgroundColor: '#FFF' }
+                right: { backgroundColor: '#004d01' },
+                left: { backgroundColor: '#010f78' }
+            }}
+            textStyle={{
+                left: { color: '#fff' }
             }}
         />
     }
@@ -48,11 +51,12 @@ const Chat = ({ route, navigation }) => {
     return (
         // Set background color according to given prop color from start screen
         <View style={[styles.container, { backgroundColor: color }]}>
+            {/* Chat */}
             <GiftedChat
                 messages={messages}
                 renderBubble={renderBubble}
                 onSend={messages => onSend(messages)}
-                user={{ _id: 1 }}
+                user={{ _id: userID, name }}
             />
             {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
         </View>
