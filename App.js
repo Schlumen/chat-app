@@ -1,13 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Start from "./components/Start"
 import Chat from "./components/Chat"
+import { useNetInfo } from '@react-native-community/netinfo';
+import { useEffect } from 'react';
 
 // import firebase and firestore
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore, disableNetwork, enableNetwork } from 'firebase/firestore'
 
 const Stack = createNativeStackNavigator();
 
@@ -23,11 +25,24 @@ const App = () => {
         appId: "1:627008813908:web:557789001c5d34c83e66c1"
     };
 
+    // Initialize NetInfo
+    const connectionStatus = useNetInfo();
+
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
 
     // Initialize Cloud Firestore and get a reference to the service
     const db = getFirestore(app);
+
+    // Disable and enable firestore database access acording to Network status
+    useEffect(() => {
+        if (connectionStatus.isConnected === false) {
+            Alert.alert("Connection lost!", "Showing offline messages from cache");
+            disableNetwork(db);
+        } else {
+            enableNetwork(db);
+        }
+    }, [connectionStatus.isConnected])
 
     return (
         // Use navigation container to navigate between diferent screens
@@ -39,7 +54,7 @@ const App = () => {
                 />
                 <Stack.Screen
                     name='Chat'
-                >{props => <Chat db={db} {...props} />}</Stack.Screen>
+                >{props => <Chat db={db} isConnected={connectionStatus.isConnected} {...props} />}</Stack.Screen>
             </Stack.Navigator>
         </NavigationContainer>
     );
