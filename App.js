@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 // import firebase and firestore
 import { initializeApp } from 'firebase/app'
 import { getFirestore, disableNetwork, enableNetwork } from 'firebase/firestore'
+import { getStorage } from "firebase/storage";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,8 +32,9 @@ const App = () => {
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
 
-    // Initialize Cloud Firestore and get a reference to the service
+    // Initialize Cloud Firestore and Storage and get a reference to the service
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
     // Disable and enable firestore database access acording to Network status
     useEffect(() => {
@@ -54,7 +56,7 @@ const App = () => {
                 />
                 <Stack.Screen
                     name='Chat'
-                >{props => <Chat db={db} isConnected={connectionStatus.isConnected} {...props} />}</Stack.Screen>
+                >{props => <Chat db={db} storage={storage} isConnected={connectionStatus.isConnected} {...props} />}</Stack.Screen>
             </Stack.Navigator>
         </NavigationContainer>
     );
