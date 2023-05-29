@@ -7,6 +7,7 @@ This Chat App allows users to choose their name and background color, enter the 
 ## How to run the app
 - Clone this repository
 - Run `npm install` inside the repository
+- If you want your own chatroom, replace the Firebase configuration in App.js with you own
 - Run `expo start` inside the repository
 - Download expo go to your mobile device and open it
 - Scan the QR-Code on your screen where you ran "expo start" with expo go
