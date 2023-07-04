@@ -1,11 +1,19 @@
 # Chat App
+
+![Screenshot](screenshot.png)
+
 This Chat App allows users to choose their name and background color, enter the chat room and start chatting with their friends. Besides of writing text the users can also share their location, take a photo and send photos.
+
 ## Used technologies
+
 - React Native
 - JavaScript
 - Google Firebase: Authentication, Firestore Database and Storage
+
 ## How to run the app
+
 - Clone this repository
+- You need to have npm/Node installed
 - Run `npm install` inside the repository
 - If you want your own chatroom, replace the Firebase configuration in App.js with you own
 - Run `expo start` inside the repository
